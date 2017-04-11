@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>DOT PLAT</title>
+	<script type="text/javascript" src="lib/codemirror.js"></script>
+	<link rel="stylesheet" type="text/css" href="lib/codemirror.css">
+	<script type="text/javascript" src="lib/vis.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="lib/vis.min.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<script src="https://cdn.bootcss.com/jquery/3.2.0/jquery.js"></script>
+	<script src=mode/xml/xml.js></script>
+	<script src=mode/javascript/javascript.js></script>
+	<script src=mode/css/css.js></script>
+	<script src=mode/htmlmixed/htmlmixed.js></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+	  var height=window.screen.availHeight;
+	  $('.left').css("height",height+"px");
+	  $('.right').css("height",height+"px");
+	  var draw=function(DOTstring){
+	  	// provide data in the DOT language
+		//var DOTstring = 'dinetwork {1 -> 1 -> 2; 2 -> 3; 2 -- 4; 2 -> 1 }';
+		var parsedData = vis.network.convertDot(DOTstring);
+		var data = {
+		  nodes: parsedData.nodes,
+		  edges: parsedData.edges
+		}
+
+		var options = parsedData.options;
+
+		// you can extend the options like a normal JSON variable:
+		options.nodes = {
+		  color: 'red'
+		}
+		var container=$(".right").get(0);
+		// create a network
+		var network = new vis.Network(container, data, options);
+	  }
+      var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+        mode: 'text/html'
+      });
+      $("[name=gen]").click(function(){
+      	 var dotString=editor.getValue();
+      	 draw(dotString);
+      });
+	})
+	</script>
+</head>
+<body>
+<div class="left">
+	<input type="button" value="生成" name="gen">
+	<textarea id="code" name="code">
+		#include "syscalls.h"
+		/* getchar:  simple buffered version */
+		int getchar(void)
+		{
+		  static char buf[BUFSIZ];
+		  static char *bufp = buf;
+		  static int n = 0;
+		  if (n == 0) {  /* buffer is empty */
+		    n = read(0, buf, sizeof buf);
+		    bufp = buf;
+		  }
+		  return (--n >= 0) ? (unsigned char) *bufp++ : EOF;
+		}
+	</textarea>
+</div>
+<div class="right">
+	
+</div>
+</body>
+</html>
